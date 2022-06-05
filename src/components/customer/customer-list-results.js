@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import { format, getDate } from 'date-fns';
-import { getData ,updatestatus} from "../../api/api";
+import { getData, updatestatus } from "../../api/api";
 import { Upload as UploadIcon } from '../../icons/upload';
 import {
   Avatar,
@@ -115,8 +115,8 @@ const columns = [
   },
 ];
 
-function createData(name, number, bank, total, status, id) {
-  return { name, number, bank, total, status, id };
+function createData(name, number, bank, total, status, id, amount) {
+  return { name, number, bank, total, status, id, amount };
 }
 
 const rows = [
@@ -134,6 +134,11 @@ export const CustomerListResults = ({ customers, ...rest }) => {
   const [detail, setDetail] = useState("");
   const [rejectdata, setRejectdata] = useState();
   const [value, setValue] = useState(0);
+  var dictbank = {
+    'scb': 'ไทยพาณิชย์',
+    'kbank': 'กสิกรไทย',
+    'ktb': 'กรุงไทย'
+  }
 
 
   useEffect(() => {
@@ -149,7 +154,7 @@ export const CustomerListResults = ({ customers, ...rest }) => {
       console.log(res.data)
       res.data.map((t) => {
         console.log(t)
-        setData(c => [...c, createData(t.bank.name, t.bank.number, t.bank.bank, t.amount, t.status, t.id)])
+        setData(c => [...c, createData(t.bank.name, t.bank.number, dictbank[t.bank.bank], t.amount, t.status, t.id, t.amount)])
       })
     })
   }
@@ -179,7 +184,28 @@ export const CustomerListResults = ({ customers, ...rest }) => {
   }
   const sendDatas = (datas) => {
     console.log(datas.status)
-    setData(data.filter(item => item.id !== datas.id));
+    if (datas.status == 'approve') {
+      const datasend = {
+        id: datas.id,
+        status: datas.status,
+      }
+      updatestatus(datasend).then((res) => {
+        console.log(res.data)
+        setData(data.filter(item => item.id !== datas.id));
+      })
+    }
+    else {
+      const datasend = {
+        id: datas.id,
+        status: datas.status,
+        detail: detail,
+        amount: `${datas.amount}`
+      }
+      updatestatus(datasend).then((res) => {
+        console.log(res.data)
+        setData(data.filter(item => item.id !== datas.id));
+      })
+    }
   }
 
   return (
