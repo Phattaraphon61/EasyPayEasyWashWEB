@@ -23,7 +23,32 @@ export const NavItem = (props) => {
         href={href}
         passHref
       >
-        <Button
+        {title == 'ออกจากระบบ' ? <Button
+          component="a"
+          startIcon={icon}
+          disableRipple
+          sx={{
+            backgroundColor: active && '',
+            borderRadius: 1,
+            color: active ? 'secondary.main' : 'error.main',
+            fontWeight: active && 'fontWeightBold',
+            justifyContent: 'flex-start',
+            px: 3,
+            textAlign: 'left',
+            textTransform: 'none',
+            width: '100%',
+            '& .MuiButton-startIcon': {
+              color: active ? 'secondary.main' : 'error.main'
+            },
+            '&:hover': {
+              backgroundColor: 'rgba(255,255,255, 0.08)'
+            }
+          }}
+        >
+          <Box sx={{ flexGrow: 1 }} >
+            {title}
+          </Box>
+        </Button> : <Button
           component="a"
           startIcon={icon}
           disableRipple
@@ -38,17 +63,17 @@ export const NavItem = (props) => {
             textTransform: 'none',
             width: '100%',
             '& .MuiButton-startIcon': {
-              color: active ? 'secondary.main' : 'neutral.400'
+              color: active ? 'secondary.main' : 'neutral.300'
             },
             '&:hover': {
               backgroundColor: 'rgba(255,255,255, 0.08)'
             }
           }}
         >
-          <Box sx={{ flexGrow: 1 }}>
+          <Box sx={{ flexGrow: 1 }} >
             {title}
           </Box>
-        </Button>
+        </Button>}
       </NextLink>
     </ListItem>
   );

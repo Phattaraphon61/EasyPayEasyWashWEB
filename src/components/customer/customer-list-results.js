@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
+import { format, getDate } from 'date-fns';
+import { getData ,updatestatus} from "../../api/api";
+import { Upload as UploadIcon } from '../../icons/upload';
 import {
   Avatar,
   Box,
@@ -25,8 +27,11 @@ import {
   InputLabel,
   InputBase,
   Button,
+  Modal,
+  TextField,
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
+import { width } from '@mui/system';
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   'label + &': {
     marginTop: theme.spacing(3),
@@ -59,6 +64,18 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  textAlign: 'center',
+  // border: '2px solid #000',
+  // boxShadow: 24,
+  p: 4,
+};
 const columns = [
   {
     id: 'name',
@@ -91,29 +108,51 @@ const columns = [
     // align: 'right',
   },
   {
-    id: 'action',
+    id: 'id',
     label: 'ยืนยัน',
     minWidth: 170,
     // align: 'right',
   },
 ];
 
-function createData(name, number, bank, total, status,action) {
-  return { name, number, bank, total, status,action };
+function createData(name, number, bank, total, status, id) {
+  return { name, number, bank, total, status, id };
 }
 
 const rows = [
-  createData('ภัทรพล ผิวเรือง', '4078580533', 'ไทยพาณิชย์', "3000", "wait",1),
-  createData('ภัทรพล ผิวเรือง', '4078580533', 'ไทยพาณิชย์', "3000", "rejected",2),
-  createData('ภัทรพล ผิวเรือง', '4078580533', 'ไทยพาณิชย์', "3000", "approve",3),
+  createData('ภัทรพล ผิวเรือง', '4078580533', 'ไทยพาณิชย์', "30001", "wait", 1),
+  createData('ภัทรพล ผิวเรือง', '4078580533', 'ไทยพาณิชย์', "30002", "wait", 2),
+  createData('ภัทรพล ผิวเรือง', '4078580533', 'ไทยพาณิชย์', "30003", "wait", 3),
 ];
 
 export const CustomerListResults = ({ customers, ...rest }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [checkbtn, setCheckbtn] = useState([]);
-  const status = ['wait', 'approve', 'rejected']
+  const [data, setData] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [detail, setDetail] = useState("");
+  const [rejectdata, setRejectdata] = useState();
+  const [value, setValue] = useState(0);
 
+
+  useEffect(() => {
+    getDatafromserver()
+  }, []);
+
+  const getDatafromserver = () => {
+    setData([])
+    const datasend = {
+      status: "wait"
+    }
+    getData(datasend).then((res) => {
+      console.log(res.data)
+      res.data.map((t) => {
+        console.log(t)
+        setData(c => [...c, createData(t.bank.name, t.bank.number, t.bank.bank, t.amount, t.status, t.id)])
+      })
+    })
+  }
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -122,74 +161,242 @@ export const CustomerListResults = ({ customers, ...rest }) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-  const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
     console.log(newValue)
     setValue(newValue);
   };
+  const updateItem = (id, whichvalue, newvalue) => {
+    let index = data.findIndex(x => x.id === id);
+    if (index !== -1) {
+      let temporaryarray = data.slice();
+      temporaryarray[index][whichvalue] = newvalue;
+      setData(temporaryarray);
+    }
+    else {
+      console.log('no match');
+    }
+  }
+  const sendDatas = (datas) => {
+    console.log(datas.status)
+    setData(data.filter(item => item.id !== datas.id));
+  }
 
   return (
-    <Card {...rest}>
-      <PerfectScrollbar>
-        <Box sx={{ minWidth: 1050 }}>
-          <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+    <div>
+      <Modal
+        open={open}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            กรอกรายละเอียด
+          </Typography>
+          <TextField id="outlined-basic" sx={{ mt: 2, width: "100%" }} label="กรอกรายละเอียด" variant="outlined" onChange={(e) => setDetail(e.target.value)} />
+          <Box sx={{ mt: 2 }}>
+            <Button
+              color="error"
+              variant="contained"
+              onClick={() => {
+                setOpen(false)
+              }}
+            >
+              ยกเลิก
+            </Button>   <Button
+              color="success"
+              variant="contained"
+              onClick={() => {
+                console.log(detail)
+                setOpen(false)
+                sendDatas(rejectdata)
+              }}
+            >
+              ยืนยัน
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+      <Box
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          m: -1
+        }}
+      >
+        <Typography
+          sx={{ m: 1 }}
+          variant="h4"
+        >
 
-            <Table stickyHeader aria-label="sticky table">
-              <TableHead >
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={column.align}
-                      style={{ minWidth: column.minWidth }}
+        </Typography>
+        <Box sx={{ m: 1 }}>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() => {
+              setCheckbtn([])
+              getDatafromserver()
+            }}
+          >
+            รีโหลดข้อมูล
+          </Button>
+          {/* <Button
+          startIcon={(<DownloadIcon fontSize="small" />)}
+          sx={{ mr: 1 }}
+        >
+          Export
+        </Button> */}
+          {/* <NextLink
+          href="/customers"
+        >
+          <Button
+            color="primary"
+            variant="contained"
+          >
+            รีโหลดข้อมูล
+          </Button>
+        </NextLink> */}
+        </Box>
+      </Box>
+      <Box sx={{ mt: 3 }}>
+        <Card>
+          {/* <CardContent>
+          <Box sx={{ maxWidth: 500 }}>
+            <TextField
+              fullWidth
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SvgIcon
+                      color="id"
+                      fontSize="small"
                     >
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
+                      <SearchIcon />
+                    </SvgIcon>
+                  </InputAdornment>
+                )
+              }}
+              placeholder="Search customer"
+              variant="outlined"
+            />
+          </Box>
+        </CardContent> */}
+        </Card>
+      </Box>
+      <Card {...rest}>
+        <PerfectScrollbar>
+          <Box sx={{ minWidth: 1050 }}>
+            <Paper sx={{ width: '100%', overflow: 'hidden' }}>
 
-                {rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => {
-                    return (
-                      <TableRow>
-                        {columns.map((column, index) => {
-                          const value = row[column.id];
-                          return (
-                            <TableCell key={column.id}>
-                              {column.id == 'action' ? <Button variant="outlined" size="medium" disabled={!checkbtn.includes(value)}>
-                                ยืนยัน
-                              </Button> : null}
-                              {status.includes(value) ? <FormControl>
-                                <NativeSelect
-                                  input={<BootstrapInput />}
-                                  defaultValue={value}
-                                  onChange={(e) => {
-                                    console.log(e.target.value, value);
-                                    setCheckbtn(c=>[...c,])
-                                  }}
-                                >
-                                  <option value={'wait'}>wait</option>
-                                  <option value={'approve'}>approve</option>
-                                  <option value={'rejected'}>rejected</option>
-                                </NativeSelect>
-                              </FormControl>
+              <Table stickyHeader aria-label="sticky table">
+                <TableHead >
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableCell
+                        key={column.id}
+                        align={column.align}
+                        style={{ minWidth: column.minWidth }}
+                      >
+                        {column.label}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
 
-                                : value}
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
+                  {data
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => {
+                      return (
+                        <TableRow>
+                          <TableCell>
+                            {row.name}
+                          </TableCell>
+                          <TableCell>
+                            {row.number}
+                          </TableCell>
+                          <TableCell>
+                            {row.bank}
+                          </TableCell>
+                          <TableCell>
+                            {row.total}
+                          </TableCell>
+                          <TableCell>
+                            <FormControl key={row.id}>
+                              <NativeSelect
+                                input={<BootstrapInput />}
+                                defaultValue={row.status}
+                                onChange={(e) => {
+                                  // console.log(e.target.value, row);\
+                                  if (e.target.value == 'rejected') {
+                                    setOpen(true)
+                                    setRejectdata(row)
+                                  }
+                                  if (!checkbtn.includes(row.id)) {
+                                    setCheckbtn(c => [...c, row.id])
+                                  }
+                                  if (e.target.value == 'wait') {
+                                    setCheckbtn([
+                                      ...checkbtn.slice(0, checkbtn.indexOf(row.id)),
+                                      ...checkbtn.slice(checkbtn.indexOf(row.id) + 1)
+                                    ]);
+                                  }
+                                  updateItem(row.id, 'status', e.target.value)
 
-          </Paper>
-          {/* <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                }}
+                              >
+                                <option value={'wait'}>wait</option>
+                                <option value={'approve'}>approve</option>
+                                <option value={'rejected'}>rejected</option>
+                              </NativeSelect>
+                            </FormControl>
+                          </TableCell>
+                          <TableCell>
+                            <Button variant="outlined" size="medium" disabled={!checkbtn.includes(row.id)} onClick={() => sendDatas(row)}>
+                              ยืนยัน
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      )
+                      // return (
+                      //   <TableRow>
+                      //     {columns.map((column, index) => {
+                      //       const value = row[column.id];
+                      //       return (
+                      //         <TableCell key={column.id}>
+                      //           {column.id == 'id' ? <Button variant="outlined" size="medium" disabled={!checkbtn.includes(value)}>
+                      //             ยืนยัน
+                      //           </Button> : null}
+                      //           {status.includes(value) ? <FormControl>
+                      //             <NativeSelect
+                      //               input={<BootstrapInput />}
+                      //               defaultValue={value}
+                      //               onChange={(e) => {
+                      //                 console.log(e.target.value, value);
+                      //                 setCheckbtn(c=>[...c,])
+                      //               }}
+                      //             >
+                      //               <option value={'wait'}>wait</option>
+                      //               <option value={'approve'}>approve</option>
+                      //               <option value={'rejected'}>rejected</option>
+                      //             </NativeSelect>
+                      //           </FormControl>
+
+                      //             : value}
+                      //         </TableCell>
+                      //       );
+                      //     })}
+                      //   </TableRow>
+                      // );
+                    })}
+                </TableBody>
+              </Table>
+
+            </Paper>
+            {/* <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={value} onChange={handleChange} >
               <Tab label="Item One" {...a11yProps(0)} />
               <Tab label="Item Two" {...a11yProps(1)} />
@@ -204,7 +411,7 @@ export const CustomerListResults = ({ customers, ...rest }) => {
           <TabPanel value={value} index={2}>
             Item Three
           </TabPanel> */}
-          {/* <Table>
+            {/* <Table>
             <TableHead>
               <TableRow>
                 <TableCell padding="checkbox">
@@ -286,18 +493,18 @@ export const CustomerListResults = ({ customers, ...rest }) => {
               ))}
             </TableBody>
           </Table> */}
-        </Box>
-      </PerfectScrollbar>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-      {/* <TablePagination
+          </Box>
+        </PerfectScrollbar>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 100]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+        {/* <TablePagination
         component="div"
         count={customers.length}
         onPageChange={handlePageChange}
@@ -306,7 +513,8 @@ export const CustomerListResults = ({ customers, ...rest }) => {
         rowsPerPage={limit}
         rowsPerPageOptions={[5, 10, 25]}
       /> */}
-    </Card>
+      </Card>
+    </div>
   );
 };
 

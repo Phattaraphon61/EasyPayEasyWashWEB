@@ -7,9 +7,11 @@ import {
   InputAdornment,
   SvgIcon, Typography
 } from '@mui/material';
+import NextLink from 'next/link';
 import { Search as SearchIcon } from '../../icons/search';
 import { Upload as UploadIcon } from '../../icons/upload';
 import { Download as DownloadIcon } from '../../icons/download';
+import { CustomerListResults } from './customer-list-results';
 
 export const CustomerListToolbar = (props) => (
   <Box {...props}>
@@ -28,26 +30,30 @@ export const CustomerListToolbar = (props) => (
       >
         จัดการคำสั่งถอน
       </Typography>
-      {/* <Box sx={{ m: 1 }}>
-        <Button
+      <Box sx={{ m: 1 }}>
+        {/* <Button
           startIcon={(<UploadIcon fontSize="small" />)}
           sx={{ mr: 1 }}
         >
           Import
-        </Button>
-        <Button
+        </Button> */}
+        {/* <Button
           startIcon={(<DownloadIcon fontSize="small" />)}
           sx={{ mr: 1 }}
         >
           Export
-        </Button>
-        <Button
-          color="primary"
-          variant="contained"
+        </Button> */}
+        {/* <NextLink
+          href="/customers"
         >
-          Add Customers
-        </Button>
-      </Box> */}
+          <Button
+            color="primary"
+            variant="contained"
+          >
+            รีโหลดข้อมูล
+          </Button>
+        </NextLink> */}
+      </Box>
     </Box>
     <Box sx={{ mt: 3 }}>
       <Card>
