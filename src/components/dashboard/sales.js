@@ -4,32 +4,34 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
 export const Sales = (props) => {
+  let ttt = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม']
+  console.log(ttt)
   const theme = useTheme();
 
   const data = {
     datasets: [
-      {
-        backgroundColor: '#3F51B5',
-        barPercentage: 0.5,
-        barThickness: 12,
-        borderRadius: 4,
-        categoryPercentage: 0.5,
-        data: [18, 5, 19, 27, 29, 19, 20],
-        label: 'เดือนนี้',
-        maxBarThickness: 10
-      },
       {
         backgroundColor: '#EEEEEE',
         barPercentage: 0.5,
         barThickness: 12,
         borderRadius: 4,
         categoryPercentage: 0.5,
+        data: [20, 5, 19, 27, 29, 19, 20],
+        label: 'ปีก่อน',
+        maxBarThickness: 10
+      },
+      {
+        backgroundColor: '#3F51B5',
+        barPercentage: 0.5,
+        barThickness: 12,
+        borderRadius: 4,
+        categoryPercentage: 0.5,
         data: [11, 20, 12, 29, 30, 25, 13],
-        label: 'เดือนก่อน',
+        label: 'ปีนี้',
         maxBarThickness: 10
       }
     ],
-    labels: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม']
+    labels: ttt
   };
 
   const options = {

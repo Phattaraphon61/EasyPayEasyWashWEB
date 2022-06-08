@@ -24,3 +24,15 @@ export const updatestatus = (data) => {
             console.log(err);
         });
 };
+
+export const getdashbord = () => {
+    return axios
+        .get(apiHost + `/dashbord`)
+        .then(response => {
+            console.log(response.data);
+            return response.data;
+        })
+        .catch(err => {
+            console.log(err);
+        });
+};

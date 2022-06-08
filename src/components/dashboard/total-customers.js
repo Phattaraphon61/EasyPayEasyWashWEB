@@ -23,7 +23,7 @@ export const TotalCustomers = (props) => (
             color="textPrimary"
             variant="h4"
           >
-            {props.data.total} บาท
+            {Number((props.data.total).toFixed(1)).toLocaleString()} บาท
           </Typography>
         </Grid>
         <Grid item>
