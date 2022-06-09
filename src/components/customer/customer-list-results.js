@@ -229,7 +229,8 @@ export const CustomerListResults = ({ customers, ...rest }) => {
               }}
             >
               ยกเลิก
-            </Button>   <Button
+            </Button>   
+            <Button
               color="success"
               variant="contained"
               onClick={() => {
