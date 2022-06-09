@@ -211,114 +211,133 @@ export const CustomerListResults = ({ customers, ...rest }) => {
 
   return (
     <div>
-           <Modal
-            open={open}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={style}>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                กรอกรายละเอียด
-              </Typography>
-              <TextField id="outlined-basic" sx={{ mt: 2, width: "100%" }} label="กรอกรายละเอียด" variant="outlined" onChange={(e) => setDetail(e.target.value)} />
-              <Box sx={{ mt: 2 }}>
-                <Button
-                  color="error"
-                  variant="contained"
-                  onClick={() => {
-                    setOpen(false)
-                  }}
+      <Box sx={{
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        m: 1
+      }}>
+        <div></div>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={() => {
+            setCheckbtn([])
+            getDatafromserver()
+          }}
+        >
+          รีโหลดข้อมูล
+        </Button>
+      </Box>
+      <Modal
+        open={open}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            กรอกรายละเอียด
+          </Typography>
+          <TextField id="outlined-basic" sx={{ mt: 2, width: "100%" }} label="กรอกรายละเอียด" variant="outlined" onChange={(e) => setDetail(e.target.value)} />
+          <Box sx={{ mt: 2 }}>
+            <Button
+              color="error"
+              variant="contained"
+              onClick={() => {
+                setOpen(false)
+              }}
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              color="success"
+              variant="contained"
+              onClick={() => {
+                console.log(detail)
+                setOpen(false)
+                sendDatas(rejectdata)
+              }}
+            >
+              ยืนยัน
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>ชื่อ</TableCell>
+              <TableCell >เลขบัญชี</TableCell>
+              <TableCell >ธนาคาร</TableCell>
+              <TableCell >จำนวน</TableCell>
+              <TableCell >สถานะ</TableCell>
+              <TableCell >ยืนยัน</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row) => (
+                <TableRow
+                  key={row.name}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                  ยกเลิก
-                </Button>   
-                <Button
-                  color="success"
-                  variant="contained"
-                  onClick={() => {
-                    console.log(detail)
-                    setOpen(false)
-                    sendDatas(rejectdata)
-                  }}
-                >
-                  ยืนยัน
-                </Button>
-              </Box>
-            </Box>
-          </Modal>
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>ชื่อ</TableCell>
-            <TableCell >เลขบัญชี</TableCell>
-            <TableCell >ธนาคาร</TableCell>
-            <TableCell >จำนวนเงิน</TableCell>
-            <TableCell >สถานะ</TableCell>
-            <TableCell >ยืนยัน</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map((row) => (
-              <TableRow
-                key={row.name}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell >{row.number}</TableCell>
-                <TableCell >{row.bank}</TableCell>
-                <TableCell >{row.total}</TableCell>
-                <TableCell ><FormControl key={row.id}>
-                  <NativeSelect
-                    input={<BootstrapInput />}
-                    defaultValue={row.status}
-                    onChange={(e) => {
-                      // console.log(e.target.value, row);\
-                      if (e.target.value == 'rejected') {
-                        setOpen(true)
-                        setRejectdata(row)
-                      }
-                      if (!checkbtn.includes(row.id)) {
-                        setCheckbtn(c => [...c, row.id])
-                      }
-                      if (e.target.value == 'wait') {
-                        setCheckbtn([
-                          ...checkbtn.slice(0, checkbtn.indexOf(row.id)),
-                          ...checkbtn.slice(checkbtn.indexOf(row.id) + 1)
-                        ]);
-                      }
-                      updateItem(row.id, 'status', e.target.value)
+                  <TableCell component="th" scope="row">
+                    {row.name}
+                  </TableCell>
+                  <TableCell >{row.number}</TableCell>
+                  <TableCell >{row.bank}</TableCell>
+                  <TableCell >{row.total}</TableCell>
+                  <TableCell ><FormControl key={row.id}>
+                    <NativeSelect
+                      input={<BootstrapInput />}
+                      defaultValue={row.status}
+                      onChange={(e) => {
+                        // console.log(e.target.value, row);\
+                        if (e.target.value == 'rejected') {
+                          setOpen(true)
+                          setRejectdata(row)
+                        }
+                        if (!checkbtn.includes(row.id)) {
+                          setCheckbtn(c => [...c, row.id])
+                        }
+                        if (e.target.value == 'wait') {
+                          setCheckbtn([
+                            ...checkbtn.slice(0, checkbtn.indexOf(row.id)),
+                            ...checkbtn.slice(checkbtn.indexOf(row.id) + 1)
+                          ]);
+                        }
+                        updateItem(row.id, 'status', e.target.value)
 
-                    }}
-                  >
-                    <option value={'wait'}>wait</option>
-                    <option value={'approve'}>approve</option>
-                    <option value={'rejected'}>rejected</option>
-                  </NativeSelect>
-                </FormControl></TableCell>
-                <TableCell >
-                  <Button variant="outlined" size="medium" disabled={!checkbtn.includes(row.id)} onClick={() => sendDatas(row)}>
-                    ยืนยัน
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </TableContainer>
+                      }}
+                    >
+                      <option value={'wait'}>wait</option>
+                      <option value={'approve'}>approve</option>
+                      <option value={'rejected'}>rejected</option>
+                    </NativeSelect>
+                  </FormControl></TableCell>
+                  <TableCell >
+                    <Button variant="outlined" size="medium" disabled={!checkbtn.includes(row.id)} onClick={() => sendDatas(row)}>
+                      ยืนยัน
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 100]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </TableContainer>
     </div>
-  
+
   );
 }
