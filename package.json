@@ -6,7 +6,7 @@
   "private": false,
   "scripts": {
     "dev": "next",
-    "build": "next build",
+    "build": "next build && next export",
     "start": "next start",
     "export": "next export",
     "lint": "next lint",
@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "eslint": "^7.32.0",
-    "eslint-config-next": "12.0.3-canary.7"
+    "eslint-config-next": "12.0.3-canary.7",
+    "eslint-config-prettier": "^8.5.0"
   }
 }
