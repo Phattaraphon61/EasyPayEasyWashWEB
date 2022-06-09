@@ -51,23 +51,23 @@ export const TotalCustomers = (props) => (
         sx={{
           alignItems: 'center',
           display: 'flex',
-          pt: 2
+          pt: 4
         }}
       >
-        <ArrowUpwardIcon color="success" />
+        {/* <ArrowUpwardIcon color="success" /> */}
         <Typography
           variant="body2"
           sx={{
             mr: 1
           }}
         >
-          {props.data.elite}%
+          {/* {props.data.elite}% */}
         </Typography>
         <Typography
           color="textSecondary"
           variant="caption"
         >
-          จากเดือนที่แล้ว
+          
         </Typography>
       </Box>
     </CardContent>

@@ -42,7 +42,7 @@ export const Budget = (props) => (
           {/* <img src="/static/images/washing.png" width={56} height={56}></img> */}
         </Grid>
       </Grid>
-      <Box
+      {/* <Box
         sx={{
           pt: 2,
           display: 'flex',
@@ -65,7 +65,7 @@ export const Budget = (props) => (
         >
           จากเดือนที่แล้ว
         </Typography>
-      </Box>
+      </Box> */}
     </CardContent>
   </Card>
 );
