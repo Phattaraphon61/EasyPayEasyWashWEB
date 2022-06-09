@@ -15,7 +15,7 @@ import { getdashbord } from "../api/api";
 const Dashboard = () => {
   const [data, setData] = useState([]);
   useEffect(() => {
-    getdashbord().then((res) => {
+    getdashbord(new Date().getFullYear()).then((res) => {
       setData(res.data)
       console.log(res.data.dashbordModel.washingtotal)
     })
@@ -82,7 +82,7 @@ const Dashboard = () => {
               xl={9}
               xs={12}
             >
-              <Sales />
+              <Sales data={{"month":data.month?data.month:0,chart:data.chart?data.chart:0}} />
             </Grid>
             <Grid
               item

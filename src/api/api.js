@@ -25,9 +25,9 @@ export const updatestatus = (data) => {
         });
 };
 
-export const getdashbord = () => {
+export const getdashbord = (year) => {
     return axios
-        .get(apiHost + `/dashbord`)
+        .get(apiHost + `/dashbord/${year}`)
         .then(response => {
             console.log(response.data);
             return response.data;
