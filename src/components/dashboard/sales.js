@@ -1,35 +1,55 @@
 import { Bar } from 'react-chartjs-2';
-import { Box, Button, Card, CardContent, CardHeader, Divider, useTheme } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Box, Button, Card, CardContent, CardHeader, Divider, useTheme, Stack } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import TextField from '@mui/material/TextField';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { getdashbord } from "../../api/api"
 
 export const Sales = (props) => {
   const theme = useTheme();
+  const [value, setValue] = useState(new Date());
+  const [month, setMonth] = useState();
+  const [chart, setChart] = useState();
+  useEffect(() => {
+    setMonth(props.data.month)
+    setChart(props.data.chart)
+    // getdashbord().then((res) => {
+    //   setData(res.data)
+    //   console.log(res.data.dashbordModel.washingtotal)
+    // })
+  }, []);
+  const handleChange = (newValue) => {
+    setValue(newValue);
+  };
 
   const data = {
     datasets: [
+      // {
+      //   backgroundColor: '#EEEEEE',
+      //   barPercentage: 0.5,
+      //   barThickness: 12,
+      //   borderRadius: 4,
+      //   categoryPercentage: 0.5,
+      //   data: [20, 5, 19, 27, 29, 19, 20],
+      //   label: 'จำนวนเครื่องซักผ้า',
+      //   maxBarThickness: 10
+      // },
       {
         backgroundColor: '#3F51B5',
         barPercentage: 0.5,
         barThickness: 12,
         borderRadius: 4,
         categoryPercentage: 0.5,
-        data: [18, 5, 19, 27, 29, 19, 20],
-        label: 'เดือนนี้',
-        maxBarThickness: 10
-      },
-      {
-        backgroundColor: '#EEEEEE',
-        barPercentage: 0.5,
-        barThickness: 12,
-        borderRadius: 4,
-        categoryPercentage: 0.5,
-        data: [11, 20, 12, 29, 30, 25, 13],
-        label: 'เดือนก่อน',
+        data: chart ? chart : props.data.chart,
+        label: 'เงินเข้าระบบ',
         maxBarThickness: 10
       }
     ],
-    labels: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม']
+    labels: month ? month : props.data.month
   };
 
   const options = {
@@ -84,15 +104,37 @@ export const Sales = (props) => {
   return (
     <Card {...props}>
       <CardHeader
-        // action={(
-        //   <Button
-        //     endIcon={<ArrowDropDownIcon fontSize="small" />}
-        //     size="small"
-        //   >
-        //     Last 7 days
-        //   </Button>
-        // )}
-        title="ยอดเครื่องซักผ้า"
+        action={(
+          // <Button
+          //   endIcon={<ArrowDropDownIcon fontSize="small" />}
+          //   size="small"
+          // >
+          //   2022
+          // </Button>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <Stack spacing={3}>
+
+              <DesktopDatePicker
+                // color="palette.primary1Color"
+                views={['year']}
+                label="เลือกปี"
+                inputFormat="yyyy"
+                minDate={new Date('2022-01-01')}
+                value={value}
+
+                onChange={((e) => {
+                  setValue(e);
+                  getdashbord(e.getFullYear()).then((res) => {
+                    setMonth(res.data.month)
+                    setChart(res.data.chart)
+                  })
+                })}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </Stack>
+          </LocalizationProvider>
+        )}
+        title="จำนวนเงินเข้าระบบ"
       />
       <Divider />
       <CardContent>

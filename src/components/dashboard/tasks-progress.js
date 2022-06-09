@@ -18,7 +18,7 @@ export const TasksProgress = (props) => (
             gutterBottom
             variant="overline"
           >
-            ยอดที่จ่ายไปแล้ว
+            คำสั่งที่ดำเนินการไปแล้ว
           </Typography>
           <Typography
             color="textPrimary"
@@ -41,7 +41,7 @@ export const TasksProgress = (props) => (
       </Grid>
       <Box sx={{ pt: 3 }}>
         <LinearProgress
-          value={75.5}
+          value={props.data.total}
           variant="determinate"
         />
       </Box>

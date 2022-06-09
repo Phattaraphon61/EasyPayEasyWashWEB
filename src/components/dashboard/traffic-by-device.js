@@ -13,7 +13,7 @@ export const TrafficByDevice = (props) => {
   const data = {
     datasets: [
       {
-        data: [50, 50],
+        data: [props.data.total, props.data.withdraw],
         backgroundColor: ['#3F51B5', '#e53935'],
         borderWidth: 8,
         borderColor: '#FFFFFF',
@@ -48,13 +48,13 @@ export const TrafficByDevice = (props) => {
   const devices = [
     {
       title: 'ยอดที่จ่ายไปแล้ว',
-      value: 50,
+      value: props.data.withdraw ==0?0:((100 / (props.data.total+props.data.withdraw)) * props.data.withdraw).toFixed(1),
       icon: InsertChartIcon,
       color: '#E53935'
     },
     {
       title: 'ยอดสุทธิ',
-      value: 50,
+      value: props.data.total==0?0: (100-((100 / (props.data.total+props.data.withdraw)) * props.data.withdraw)).toFixed(1),
       icon: AttachMoneyIcon,
       color: '#3F51B5'
     },

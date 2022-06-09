@@ -12,32 +12,36 @@ const Login = () => {
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
-      email: 'demo@devias.io',
-      password: 'Password123'
+      email: '',
+      password: ''
     },
     validationSchema: Yup.object({
       email: Yup
         .string()
-        .email(
-          'Must be a valid email')
+        // .email(
+        //   'Must be a valid email')
         .max(255)
         .required(
-          'Email is required'),
+          'กรุณากรอกชื่อผู้ใช้'),
       password: Yup
         .string()
         .max(255)
         .required(
-          'Password is required')
+          'กรุณากรอกรหัสผ่าน')
     }),
     onSubmit: () => {
-      router.push('/');
+      if (formik.values.email === "admin" && formik.values.password === "1234") {
+        window.localStorage.setItem('data','yes')
+        router.push('/');
+      }
+
     }
   });
 
   return (
     <>
       <Head>
-        <title>Login | Material Kit</title>
+        <title>เข้าสู่ระบบ</title>
       </Head>
       <Box
         component="main"
@@ -49,7 +53,7 @@ const Login = () => {
         }}
       >
         <Container maxWidth="sm">
-          <NextLink
+          {/* <NextLink
             href="/"
             passHref
           >
@@ -59,24 +63,24 @@ const Login = () => {
             >
               Dashboard
             </Button>
-          </NextLink>
+          </NextLink> */}
           <form onSubmit={formik.handleSubmit}>
-            <Box sx={{ my: 3 }}>
+            <Box sx={{ my: 1 }}>
               <Typography
                 color="textPrimary"
                 variant="h4"
               >
-                Sign in
+                ลงชื่อเข้าใช้
               </Typography>
-              <Typography
+              {/* <Typography
                 color="textSecondary"
                 gutterBottom
                 variant="body2"
               >
                 Sign in on the internal platform
-              </Typography>
+              </Typography> */}
             </Box>
-            <Grid
+            {/* <Grid
               container
               spacing={3}
             >
@@ -112,31 +116,31 @@ const Login = () => {
                   Login with Google
                 </Button>
               </Grid>
-            </Grid>
+            </Grid> */}
             <Box
               sx={{
                 pb: 1,
-                pt: 3
+                pt: 1
               }}
             >
-              <Typography
+              {/* <Typography
                 align="center"
                 color="textSecondary"
                 variant="body1"
               >
                 or login with email address
-              </Typography>
+              </Typography> */}
             </Box>
             <TextField
               error={Boolean(formik.touched.email && formik.errors.email)}
               fullWidth
               helperText={formik.touched.email && formik.errors.email}
-              label="Email Address"
+              label="ชื่อผู้ใช้"
               margin="normal"
               name="email"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
-              type="email"
+              // type="email"
               value={formik.values.email}
               variant="outlined"
             />
@@ -144,7 +148,7 @@ const Login = () => {
               error={Boolean(formik.touched.password && formik.errors.password)}
               fullWidth
               helperText={formik.touched.password && formik.errors.password}
-              label="Password"
+              label="รหัสผ่าน"
               margin="normal"
               name="password"
               onBlur={formik.handleBlur}
@@ -156,16 +160,16 @@ const Login = () => {
             <Box sx={{ py: 2 }}>
               <Button
                 color="primary"
-                disabled={formik.isSubmitting}
+                // disabled={formik.isSubmitting}
                 fullWidth
                 size="large"
                 type="submit"
                 variant="contained"
               >
-                Sign In Now
+               ยืนยัน
               </Button>
             </Box>
-            <Typography
+            {/* <Typography
               color="textSecondary"
               variant="body2"
             >
@@ -185,7 +189,7 @@ const Login = () => {
                   Sign Up
                 </Link>
               </NextLink>
-            </Typography>
+            </Typography> */}
           </form>
         </Container>
       </Box>

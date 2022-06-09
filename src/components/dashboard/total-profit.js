@@ -22,7 +22,7 @@ export const TotalProfit = (props) => (
             color="textPrimary"
             variant="h4"
           >
-            50 บัญชี
+            {props.data.user} บัญชี
           </Typography>
         </Grid>
         <Grid item>

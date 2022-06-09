@@ -123,6 +123,7 @@ const rows = [
   createData('ภัทรพล ผิวเรือง', '4078580533', 'ไทยพาณิชย์', "30001", "wait", 1),
   createData('ภัทรพล ผิวเรือง', '4078580533', 'ไทยพาณิชย์', "30002", "wait", 2),
   createData('ภัทรพล ผิวเรือง', '4078580533', 'ไทยพาณิชย์', "30003", "wait", 3),
+  createData('ภัทรพล ผิวเรือง', '4078580533', 'ไทยพาณิชย์', "30004", "wait", 4),
 ];
 
 export const CustomerListResults = ({ customers, ...rest }) => {
@@ -151,9 +152,7 @@ export const CustomerListResults = ({ customers, ...rest }) => {
       status: "wait"
     }
     getData(datasend).then((res) => {
-      console.log(res.data)
       res.data.map((t) => {
-        console.log(t)
         setData(c => [...c, createData(t.bank.name, t.bank.number, dictbank[t.bank.bank], t.amount, t.status, t.id, t.amount)])
       })
     })
@@ -168,7 +167,6 @@ export const CustomerListResults = ({ customers, ...rest }) => {
   };
 
   const handleChange = (event, newValue) => {
-    console.log(newValue)
     setValue(newValue);
   };
   const updateItem = (id, whichvalue, newvalue) => {
@@ -183,14 +181,13 @@ export const CustomerListResults = ({ customers, ...rest }) => {
     }
   }
   const sendDatas = (datas) => {
-    console.log(datas.status)
     if (datas.status == 'approve') {
       const datasend = {
         id: datas.id,
         status: datas.status,
       }
       updatestatus(datasend).then((res) => {
-        console.log(res.data)
+  
         setData(data.filter(item => item.id !== datas.id));
       })
     }
@@ -210,6 +207,25 @@ export const CustomerListResults = ({ customers, ...rest }) => {
 
   return (
     <div>
+      <Box sx={{
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        m: 1
+      }}>
+        <div></div>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={() => {
+            setCheckbtn([])
+            getDatafromserver()
+          }}
+        >
+          รีโหลดข้อมูล
+        </Button>
+      </Box>
       <Modal
         open={open}
         aria-labelledby="modal-modal-title"
@@ -229,11 +245,11 @@ export const CustomerListResults = ({ customers, ...rest }) => {
               }}
             >
               ยกเลิก
-            </Button>   <Button
+            </Button>
+            <Button
               color="success"
               variant="contained"
               onClick={() => {
-                console.log(detail)
                 setOpen(false)
                 sendDatas(rejectdata)
               }}
@@ -243,284 +259,69 @@ export const CustomerListResults = ({ customers, ...rest }) => {
           </Box>
         </Box>
       </Modal>
-      <Box
-        sx={{
-          alignItems: 'center',
-          display: 'flex',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          m: -1
-        }}
-      >
-        <Typography
-          sx={{ m: 1 }}
-          variant="h4"
-        >
-
-        </Typography>
-        <Box sx={{ m: 1 }}>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={() => {
-              setCheckbtn([])
-              getDatafromserver()
-            }}
-          >
-            รีโหลดข้อมูล
-          </Button>
-          {/* <Button
-          startIcon={(<DownloadIcon fontSize="small" />)}
-          sx={{ mr: 1 }}
-        >
-          Export
-        </Button> */}
-          {/* <NextLink
-          href="/customers"
-        >
-          <Button
-            color="primary"
-            variant="contained"
-          >
-            รีโหลดข้อมูล
-          </Button>
-        </NextLink> */}
-        </Box>
-      </Box>
-      <Box sx={{ mt: 3 }}>
-        <Card>
-          {/* <CardContent>
-          <Box sx={{ maxWidth: 500 }}>
-            <TextField
-              fullWidth
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SvgIcon
-                      color="id"
-                      fontSize="small"
-                    >
-                      <SearchIcon />
-                    </SvgIcon>
-                  </InputAdornment>
-                )
-              }}
-              placeholder="Search customer"
-              variant="outlined"
-            />
-          </Box>
-        </CardContent> */}
-        </Card>
-      </Box>
-      <Card {...rest}>
-        <PerfectScrollbar>
-          <Box sx={{ minWidth: 1050 }}>
-            <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-
-              <Table stickyHeader aria-label="sticky table">
-                <TableHead >
-                  <TableRow>
-                    {columns.map((column) => (
-                      <TableCell
-                        key={column.id}
-                        align={column.align}
-                        style={{ minWidth: column.minWidth }}
-                      >
-                        {column.label}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-
-                  {data
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => {
-                      return (
-                        <TableRow>
-                          <TableCell>
-                            {row.name}
-                          </TableCell>
-                          <TableCell>
-                            {row.number}
-                          </TableCell>
-                          <TableCell>
-                            {row.bank}
-                          </TableCell>
-                          <TableCell>
-                            {row.total}
-                          </TableCell>
-                          <TableCell>
-                            <FormControl key={row.id}>
-                              <NativeSelect
-                                input={<BootstrapInput />}
-                                defaultValue={row.status}
-                                onChange={(e) => {
-                                  // console.log(e.target.value, row);\
-                                  if (e.target.value == 'rejected') {
-                                    setOpen(true)
-                                    setRejectdata(row)
-                                  }
-                                  if (!checkbtn.includes(row.id)) {
-                                    setCheckbtn(c => [...c, row.id])
-                                  }
-                                  if (e.target.value == 'wait') {
-                                    setCheckbtn([
-                                      ...checkbtn.slice(0, checkbtn.indexOf(row.id)),
-                                      ...checkbtn.slice(checkbtn.indexOf(row.id) + 1)
-                                    ]);
-                                  }
-                                  updateItem(row.id, 'status', e.target.value)
-
-                                }}
-                              >
-                                <option value={'wait'}>wait</option>
-                                <option value={'approve'}>approve</option>
-                                <option value={'rejected'}>rejected</option>
-                              </NativeSelect>
-                            </FormControl>
-                          </TableCell>
-                          <TableCell>
-                            <Button variant="outlined" size="medium" disabled={!checkbtn.includes(row.id)} onClick={() => sendDatas(row)}>
-                              ยืนยัน
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      )
-                      // return (
-                      //   <TableRow>
-                      //     {columns.map((column, index) => {
-                      //       const value = row[column.id];
-                      //       return (
-                      //         <TableCell key={column.id}>
-                      //           {column.id == 'id' ? <Button variant="outlined" size="medium" disabled={!checkbtn.includes(value)}>
-                      //             ยืนยัน
-                      //           </Button> : null}
-                      //           {status.includes(value) ? <FormControl>
-                      //             <NativeSelect
-                      //               input={<BootstrapInput />}
-                      //               defaultValue={value}
-                      //               onChange={(e) => {
-                      //                 console.log(e.target.value, value);
-                      //                 setCheckbtn(c=>[...c,])
-                      //               }}
-                      //             >
-                      //               <option value={'wait'}>wait</option>
-                      //               <option value={'approve'}>approve</option>
-                      //               <option value={'rejected'}>rejected</option>
-                      //             </NativeSelect>
-                      //           </FormControl>
-
-                      //             : value}
-                      //         </TableCell>
-                      //       );
-                      //     })}
-                      //   </TableRow>
-                      // );
-                    })}
-                </TableBody>
-              </Table>
-
-            </Paper>
-            {/* <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs value={value} onChange={handleChange} >
-              <Tab label="Item One" {...a11yProps(0)} />
-              <Tab label="Item Two" {...a11yProps(1)} />
-              <Tab label="Item Three" {...a11yProps(2)} />
-            </Tabs>
-          </Box>
-          <TabPanel value={value} index={0}>
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            Item Two
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            Item Three
-          </TabPanel> */}
-            {/* <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedCustomerIds.length === customers.length}
-                    color="primary"
-                    indeterminate={
-                      selectedCustomerIds.length > 0
-                      && selectedCustomerIds.length < customers.length
-                    }
-                    onChange={handleSelectAll}
-                  />
-                </TableCell>
-                <TableCell>
-                  Name
-                </TableCell>
-                <TableCell>
-                  Email
-                </TableCell>
-                <TableCell>
-                  Location
-                </TableCell>
-                <TableCell>
-                  Phone
-                </TableCell>
-                <TableCell>
-                  Registration date
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {customers.slice(0, limit).map((customer) => (
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>ชื่อ</TableCell>
+              <TableCell >เลขบัญชี</TableCell>
+              <TableCell >ธนาคาร</TableCell>
+              <TableCell >จำนวน</TableCell>
+              <TableCell >สถานะ</TableCell>
+              <TableCell >ยืนยัน</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row) => (
                 <TableRow
-                  hover
-                  key={customer.id}
-                  selected={selectedCustomerIds.indexOf(customer.id) !== -1}
+                  key={row.name}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={selectedCustomerIds.indexOf(customer.id) !== -1}
-                      onChange={(event) => handleSelectOne(event, customer.id)}
-                      value="true"
-                    />
+                  <TableCell component="th" scope="row">
+                    {row.name}
                   </TableCell>
-                  <TableCell>
-                    <Box
-                      sx={{
-                        alignItems: 'center',
-                        display: 'flex'
+                  <TableCell >{row.number}</TableCell>
+                  <TableCell >{row.bank}</TableCell>
+                  <TableCell >{row.total}</TableCell>
+                  <TableCell ><FormControl key={row.id}>
+                    <NativeSelect
+                      input={<BootstrapInput />}
+                      defaultValue={row.status}
+                      onChange={(e) => {
+                        // console.log(e.target.value, row);\
+                        if (e.target.value == 'rejected') {
+                          setOpen(true)
+                          setRejectdata(row)
+                        }
+                        if (!checkbtn.includes(row.id)) {
+                          setCheckbtn(c => [...c, row.id])
+                        }
+                        if (e.target.value == 'wait') {
+                          setCheckbtn([
+                            ...checkbtn.slice(0, checkbtn.indexOf(row.id)),
+                            ...checkbtn.slice(checkbtn.indexOf(row.id) + 1)
+                          ]);
+                        }
+                        updateItem(row.id, 'status', e.target.value)
+
                       }}
                     >
-                      <Avatar
-                        src={customer.avatarUrl}
-                        sx={{ mr: 2 }}
-                      >
-                        {getInitials(customer.name)}
-                      </Avatar>
-                      <Typography
-                        color="textPrimary"
-                        variant="body1"
-                      >
-                        {customer.name}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    {customer.email}
-                  </TableCell>
-                  <TableCell>
-                    {`${customer.address.city}, ${customer.address.state}, ${customer.address.country}`}
-                  </TableCell>
-                  <TableCell>
-                    {customer.phone}
-                  </TableCell>
-                  <TableCell>
-                    {format(customer.createdAt, 'dd/MM/yyyy')}
+                      <option value={'wait'}>wait</option>
+                      <option value={'approve'}>approve</option>
+                      <option value={'rejected'}>rejected</option>
+                    </NativeSelect>
+                  </FormControl></TableCell>
+                  <TableCell >
+                    <Button variant="outlined" size="medium" disabled={!checkbtn.includes(row.id)} onClick={() => sendDatas(row)}>
+                      ยืนยัน
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
-            </TableBody>
-          </Table> */}
-          </Box>
-        </PerfectScrollbar>
+          </TableBody>
+        </Table>
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
@@ -530,53 +331,8 @@ export const CustomerListResults = ({ customers, ...rest }) => {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-        {/* <TablePagination
-        component="div"
-        count={customers.length}
-        onPageChange={handlePageChange}
-        onRowsPerPageChange={handleLimitChange}
-        page={page}
-        rowsPerPage={limit}
-        rowsPerPageOptions={[5, 10, 25]}
-      /> */}
-      </Card>
+      </TableContainer>
     </div>
+
   );
-};
-
-CustomerListResults.propTypes = {
-  customers: PropTypes.array.isRequired
-};
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
 }
